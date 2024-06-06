@@ -1,0 +1,40 @@
+
+
+Command:
+	FilterExpression;
+
+
+
+//################################## Filter Expression ################
+
+FilterExpression:
+ op=FilterOperand (op=BoolOperator op=FilterOperand)*
+;
+
+
+FilterOperand:
+op= FilterTerm | ('(' op=FilterExpression ')')
+;
+
+FilterTerm:
+    field=QueryIdentifier op=MathOperator val=ValueIdentifier
+;
+
+	
+
+
+//################################## TERMINALS #########################
+// 'endocardite' AND biologie:fer > 10
+ 
+Comment: /\#.*$/;
+DomainIdentifier: /\w+/;
+KeyIdentifier: /\w+/;
+ValueIdentifier: (NUMBER|STRING|BOOL|Tuple);
+
+KeyValueIdentifier: domain=DomainIdentifier ':' key=KeyIdentifier;
+
+QueryIdentifier: KeyValueIdentifier|'q';
+
+BoolOperator: "AND"|"OR"|"NOT";
+MathOperator: />=|<=|=~|!=|=|>|<|!~|has|!has|!in|in/;
+Tuple: '(' items+=ValueIdentifier[','] ')';

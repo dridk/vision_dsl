@@ -1,0 +1,1 @@
+ q="endocardite" AND bio:glycemie> 10 AND (pmsi:cim10 = 'FT43ATC' OR pmsi:cim10 = 'TRAFGRT')
