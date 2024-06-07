@@ -28,7 +28,7 @@ def create_fake_data_for_domain(domain):
 def create_fake_data():
     user_df = pl.DataFrame([{"ipp":i, "age": choice(range(10,80)), "sex":choice([0,1])} for i in range(1000)])
     doc_df= pl.DataFrame([ {"ipp": choice(range(1000)), 
-                            "text": fake.text() }
+                            "text": " ".join(fake.text() for _ in range(50)) }
                             for _ in range(1000)   
                          ])
     data_df = pl.DataFrame([{"ipp":choice(range(1000)), "domain":choice(["bio", "pmsi", "pharma"])}for i in range(1000)])
@@ -39,7 +39,7 @@ def create_fake_data():
         pl.Series("key", [code["key"] for code in code]),
         pl.Series("value", [code["value"] for code in code])
     )
-
+    
     return user_df, doc_df, data_df 
 
 
@@ -56,7 +56,7 @@ def table_viewer(conn):
     print(conn.sql("SELECT * FROM docs LIMIT 10"))
     print(conn.sql("SELECT * FROM data LIMIT 10"))
     
-    
+
 def main():
     conn = connection("vision.db")
     conn = create_sql_tables(conn)
