@@ -39,7 +39,6 @@ def create_fake_data():
         pl.Series("key", [code["key"] for code in code]),
         pl.Series("value", [code["value"] for code in code])
     )
-    
     return user_df, doc_df, data_df 
 
 
@@ -51,17 +50,9 @@ def create_sql_tables(conn):
     return conn
 
 
-def table_viewer(conn):
-    print(conn.sql("SELECT * FROM patients LIMIT 10"))
-    print(conn.sql("SELECT * FROM docs LIMIT 10"))
-    print(conn.sql("SELECT * FROM data LIMIT 10"))
-    
-
 def main():
     conn = connection("vision.db")
-    conn = create_sql_tables(conn)
-    # table_viewer(conn)
-    
+    conn = create_sql_tables(conn)    
     return conn.close()
 
 
@@ -71,6 +62,5 @@ if __name__ == "__main__":
     main()
 
 
-# régler problèmes data : pmsi (ccam, cim10)
-# rallonger le texte 
+
 
