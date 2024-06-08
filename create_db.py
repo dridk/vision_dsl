@@ -18,21 +18,20 @@ def create_fake_data_for_domain(domain):
     # probleme de valeur : CIM-10/CCAM => str (code) // other : int (valeur)
     # nécessite de choisir des keys-values en fonction des domaines (bio, pmsi, pharma)
     if domain == "pmsi" : 
-        diag = choice(["CIM10", "CCAM"])
-        # diag = choice(["C000", "N99", "S031", "Z017", "E342", "B666", "F430", "C320", "E435", "D329"])
-        acte = choice(["HBQK001", "HBQK002", "HBQH001", "HBQH002", "JCCP001", "JCCP002", "JCCP004"])
-        return {"key" : diag, "value": acte}
+        key = choice(["CIM10", "CCAM"])
+        if key == "CIM10" :
+            value = choice(["C000", "N99", "S031", "Z017", "E342", "B666", "F430", "C320", "E435", "D329"])
+        if key == "CCAM" :
+            value = choice(["HBQK001", "HBQK002", "HBQH001", "HBQH002", "JCCP001", "JCCP002", "JCCP004"])
+        return {"key" : key, "value": value}
     
     if domain == "bio":
         code = choice(["Fer","Glycemie", "Plaquettes", "Leucocytes", "Sodium", "Urée", "Vitamine D"])
-        return {"key" : code, "value": str(choice(range(0,200)))}
     if domain == "pharma":
         code = choice(["Médicament_1", "Médicament_2", "Médicament_3", "Médicament_4", "Médicament_5", "Médicament_6", "Médicament_7"])
-        return {"key" : code, "value": str(choice(range(0,200)))}
+    return {"key" : code, "value": str(choice(range(0,200)))}
     
-    # VALUES : CIM10, CCAM
-    #code = choice(["C000", "N99", "S031", "Z017", "E342", "B666", "F430", "C320", "E435", "D329"])
-    #code = choice(["HBQK001", "HBQK002", "HBQH001", "HBQH002", "JCCP001", "JCCP002", "JCCP004"])
+
 def create_fake_data():
     user_df = pl.DataFrame([{"ipp":i, "age": choice(range(10,80)), "sex":choice([0,1])} for i in range(1000)])
     doc_df= pl.DataFrame([ {"ipp": choice(range(1000)), 
