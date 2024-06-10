@@ -1,15 +1,21 @@
 from textx import metamodel_from_file
 # textx generate query.tx --grammar dsl.tx --target dot
 
+def cast_value(x):
+    if type(x) == str :
+        return f"'{x}'"
+    else :
+        return x
 
 def simple_query(element:str) -> str:
     # prend un requête simple : "bio:fer > 10 AND pmsi:cim10 = 'FT43ATC'"
-    # prend le premier et le dernier élément 
+    # prend le premier + l'opérateur (AND/OR) + le dernier élément 
     request = f"""
-        SELECT IPP FROM data WHERE domain='{element[0].op.field.domain}' AND key='{element[0].op.field.key}' AND value{element[0].op.op}{element[0].op.val}
-        {element[1]} IPP IN (SELECT IPP FROM data WHERE domain='{element[-1].op.field.domain}' AND key='{element[-1].op.field.key}' AND value{element[-1].op.op}{element[-1].op.val})
+        SELECT IPP FROM data WHERE domain='{element[0].op.field.domain}' AND key='{element[0].op.field.key}' AND value{element[0].op.op}{cast_value(element[0].op.val)}
+        {element[1]} IPP IN (SELECT IPP FROM data WHERE domain='{element[-1].op.field.domain}' AND key='{element[-1].op.field.key}' AND value{element[-1].op.op}{cast_value(element[-1].op.val)})
         """
     return request
+
 
 
 def query_to_sql(query:str) -> str:
@@ -18,6 +24,7 @@ def query_to_sql(query:str) -> str:
     # si la requête est simple (2 éléments)
     if len(model.op) <= 3 :
         return simple_query(model.op)
+   
     # requêtes complexes : 
     position_dict = {}
     for i, word in enumerate(model.op):
@@ -28,12 +35,8 @@ def query_to_sql(query:str) -> str:
             value = None
         position_dict[i] = value
         
-
-    if type(model.op[0].op.val) == int:
-        request = "SELECT IPP FROM data WHERE " + f"domain='{model.op[0].op.field.domain}' AND key='{model.op[0].op.field.key}' AND value{model.op[0].op.op}{model.op[0].op.val}"
-    else : 
-        request = "SELECT IPP FROM data WHERE " + f"domain='{model.op[0].op.field.domain}' AND key='{model.op[0].op.field.key}' AND value{model.op[0].op.op}'{model.op[0].op.val}'"
-        
+    # 1er élément de la requête  
+    request = "SELECT IPP FROM data WHERE " + f"domain='{model.op[0].op.field.domain}' AND key='{model.op[0].op.field.key}' AND value{model.op[0].op.op}{cast_value(model.op[0].op.val)}"
     # suppression du premier élément du dictionnaire
     del position_dict[0]
 
@@ -60,11 +63,11 @@ def query_to_sql(query:str) -> str:
 # Requêtes de test :
 # ------------------------------------
 #query="bio:Fer = 10 AND pmsi:CIM10 = 'D329' OR pmsi:CIM10 = 'C000'"
-query="bio:Fer = 10 AND pmsi:CIM10 = 'E435'"
+#query="bio:Fer = 10 AND pmsi:CIM10 = 'E435'"
 #query="bio:Fer = 10 OR pmsi:CIM10 = 'N99'"
 # query="bio:Fer = 10 AND pmsi:CIM10 = 'S031' OR pmsi:CIM10 = 'C000' AND pharma:CCAM = 'HBQK002'"
 # query="bio:Fer = 10 AND pmsi:CIM10 = 'S031' OR pmsi:CIM10 = 'C000' AND pharma:CCAM = 'HBQK002' OR bio:Fer = 50"
 
 
-result_query = query_to_sql(query)   
-print(result_query)
+# result_query = query_to_sql(query)   
+# print(result_query)
